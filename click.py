@@ -50,7 +50,7 @@ def send_click(x, y):
 
 	user32.SendInput(3, clickarray, ctypes.sizeof(MouseInput))
 
-grid_offset = (350, 90)
+grid_offset = (350, 92)
 grid_square = 82
 def swap_gems(gem1, gem2):
 	print 'clicking at', gem1, gem2

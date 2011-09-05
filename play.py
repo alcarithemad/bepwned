@@ -26,7 +26,6 @@ class Grid(object):
 	def updategrid(self):
 		img = self.imagefunc()
 		img = img.crop((self.gleft, self.gtop, self.gright, self.gbottom))
-		img.save('C:\cropped.png')
 		img = img.load()
 		for x in xrange(len(self.grid)):
 			for y in xrange(len(self.grid[0])):
@@ -36,38 +35,36 @@ class Grid(object):
 				#color = map(lambda p: img[p[0], p[1]], points)
 				#avgcolor = map(lambda x:x/len(points), map(sum, zip(*color)))
 				color = img[x*click.grid_square+36,y*click.grid_square+50]
-				avgcolor = colors.normalizeColor(color)
+				avgcolor =map(lambda x:x/55, map(sum, zip(color)))
+				#avgcolor = colors.normalizeColor(color)
 				#print avgcolor
 				if (x,y) in ((2, 2,), (0, 1)):
 					pass
 					#print avgcolor
-					#print colors.normalizeColor(avgcolor)
+					#print colors.normalizeColor(avgcolor)	
 				self.grid[x][y] = avgcolor
 	
 	def search(self, func):
 		func(self)
-
-
-
-					
 
 if __name__ == '__main__':
 	click.user32.BringWindowToTop(click.HWND)
 	click.user32.SetForegroundWindow(click.HWND)
 	g = Grid(click.get_screen)
 	import random, time
+	random.seed()
 	matches = 0
-	while matches < 300:
+	while matches < 600:
 		g.updategrid()
 		choices = []
-		for t in templates.templates:
+		for t in templates.templates:		
 			choices += t.search(g)
-		random.shuffle(choices)
-		for c in choices[:4]:
+		#random.shuffle(choices)
+		for c in choices:
 			click.swap_gems(*c)
-			matches += 4
-		print 'ps', (g[point(0, 4)], g[point(0, 6)], g[point(0, 7)])
-		time.sleep(1)
+			matches += 1
+		time.sleep(.1)
+	print 'ps', (g[point(0, 4)], g[point(0, 6)], g[point(0, 7)])
 	# for x in xrange(2):
 	# 	first = random.randint(1, 6), random.randint(1, 6)
 	# 	if random.random() > 0.5:
