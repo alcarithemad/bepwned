@@ -1,13 +1,23 @@
 # TODO: make these better, maybe add a generator for them, and make like 2 dozen more
 # also make them rotate
-
 from play import point
 
 class Template(object):
-	def __init__(self, pattern, swap, edge):
+	def __init__(self, pattern, swap):
 		self.pattern = pattern
 		self.swap = swap
-		self.edge = edge
+		self.maxedge()
+
+	def maxedge(self):
+		x = 0
+		y = 0
+		for p in self.pattern:
+			if p.a > x:
+				x = p.a
+			if p.b > y:
+				y = p.b
+		print self.pattern, 7-x, 7-y
+		self.edge = (7-x, 7-y)
 
 	def search(self, grid):
 		possibles = []
@@ -26,6 +36,40 @@ Ab
 -X
 '''
 
+def rotate_90(p):
+	x = -p.b
+	y =  p.a
+	return point(x, y)
+
+def reflecth(p):
+	x = -p.a
+	y = p.b
+	return point(x, y)
+
+def alter_template(f, t):
+	newtemp = map(f, t.pattern)
+	newswap = map(f, t.swap)
+	hadjust = 0
+	vadjust = 0
+	for p in newtemp:
+		if p.a < hadjust:
+			hadjust = p.a
+		if p.b < vadjust:
+			vadjust = p.b
+	shift = point(-hadjust, -vadjust)
+	newtemp = map(shift.__add__, newtemp)
+	newswap = map(shift.__add__, newswap)
+	return Template(newtemp, newswap)
+
+def full_coverage(t): # for full coverage, rotate 4 times, mirror, rotate 4 more times?
+	temps = [t]
+	rotation = t
+	for x in xrange(5):
+		rotation = alter_template(rotate_90, t)
+		temps.append(rotation)
+		temps.append(alter_template(reflecth, t))
+	return temps
+
 def parse_template(art):
 	art = art.strip('\n')
 	tplate = []
@@ -36,9 +80,14 @@ def parse_template(art):
 				tplate.append(point(x, y))
 			if char in ('A', 'b'):
 				swap.append(point(x, y))
-	edgex = max(map(lambda x:len(x.strip()), art.split('\n')))
-	edgey = len(art.split('\n'))
-	return Template(tplate, swap, (8-edgex, 8-edgey))
+	return Template(tplate, swap)
+
+def load_templates(data):
+	arts = data.split('\n\n')
+	temps = []
+	for a in arts:
+		temps += full_coverage(parse_template(a))
+	return temps
 
 templates = [
 parse_template(
