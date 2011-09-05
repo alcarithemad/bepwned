@@ -1,4 +1,4 @@
-import click, colors, templates
+import click, templates
 
 class point(object):
 	def __init__(self, a, b):
@@ -7,8 +7,8 @@ class point(object):
 		return point(self.a+p.a, self.b+p.b)
 	def tuple(self):
 		return (self.a, self.b)
-	def __str__(self):
-		return '({0}, {1})'.format(self.a, self.b)
+	def __repr__(self):
+		return 'point({0}, {1})'.format(self.a, self.b)
 
 class Grid(object):
 	gleft = click.grid_offset[0]
@@ -54,16 +54,15 @@ if __name__ == '__main__':
 	import random, time
 	random.seed()
 	matches = 0
-	while matches < 600:
+	while click.user32.GetForegroundWindow()==click.HWND:
 		g.updategrid()
 		choices = []
 		for t in templates.templates:		
 			choices += t.search(g)
 		#random.shuffle(choices)
-		for c in choices:
+		for c in choices[:1]:
 			click.swap_gems(*c)
-			matches += 1
-		time.sleep(.1)
+		time.sleep(.2)
 	print 'ps', (g[point(0, 4)], g[point(0, 6)], g[point(0, 7)])
 	# for x in xrange(2):
 	# 	first = random.randint(1, 6), random.randint(1, 6)

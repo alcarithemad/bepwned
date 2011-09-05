@@ -53,7 +53,7 @@ def send_click(x, y):
 grid_offset = (350, 92)
 grid_square = 82
 def swap_gems(gem1, gem2):
-	print 'clicking at', gem1, gem2
+	#print 'clicking at', gem1, gem2
 	gem1 = map(lambda x:x*grid_square, gem1)
 	gem2 = map(lambda x:x*grid_square, gem2)
 	gem1[0] += grid_offset[0]+bbox.left

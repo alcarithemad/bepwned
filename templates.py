@@ -16,7 +16,6 @@ class Template(object):
 				x = p.a
 			if p.b > y:
 				y = p.b
-		print self.pattern, 7-x, 7-y
 		self.edge = (7-x, 7-y)
 
 	def search(self, grid):
@@ -29,7 +28,13 @@ class Template(object):
 				if all([p == grid[g+self.pattern[0]] for p in points]):
 					possibles.append(((self.swap[0]+g).tuple(), (self.swap[1]+g).tuple()))
 		return possibles
-#this is what i want a template to look like
+	def __repr__(self):
+		return '''Template({0},
+						{1})'''.format(self.pattern, self.swap)
+# this is what i want a template to look like
+# A is the gem we'll be moving; b is the spot we'll switch it with
+# Xs are gems that match A
+# -s are anything
 '''
 Ab
 -X
@@ -64,10 +69,10 @@ def alter_template(f, t):
 def full_coverage(t): # for full coverage, rotate 4 times, mirror, rotate 4 more times?
 	temps = [t]
 	rotation = t
-	for x in xrange(5):
-		rotation = alter_template(rotate_90, t)
+	for x in xrange(4):
+		rotation = alter_template(rotate_90, rotation)
 		temps.append(rotation)
-		temps.append(alter_template(reflecth, t))
+		temps.append(alter_template(reflecth, rotation))
 	return temps
 
 def parse_template(art):
@@ -83,95 +88,11 @@ def parse_template(art):
 	return Template(tplate, swap)
 
 def load_templates(data):
+	data = data.strip('\n')
 	arts = data.split('\n\n')
 	temps = []
 	for a in arts:
 		temps += full_coverage(parse_template(a))
 	return temps
 
-templates = [
-parse_template(
-'''
-Ab
--X
--X
-'''),
-parse_template(
-'''
--X
--X
-Ab
-'''),
-parse_template(
-'''
-X
-X
-bA
-'''),
-parse_template(
-'''
-A
-b
-X
-X
-'''),
-parse_template(
-'''
-X
-X
-b
-A
-'''),
-parse_template(
-'AbXX'),
-parse_template(
-'XXbA'),
-parse_template(
-'''
-bA
-X-
-X-
-'''),
-parse_template(
-'''
---A
-XXb
-'''),
-parse_template(
-'''
-XXb
---A
-'''),
-parse_template(
-'''
-bXX
-A
-'''),
-parse_template(
-'''
-XbX
--A
-'''),
-parse_template(
-'''
--A
-XbX
-'''),
-parse_template(
-'''
-X
-bA
-X
-'''),
-parse_template(
-'''
--X
-Ab
--X
-'''),
-parse_template(
-'''
-A
-bXX
-'''),
-]
+templates = load_templates(file('templates.txt', 'r').read())
